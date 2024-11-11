@@ -16,27 +16,32 @@ interface Content {
   content: string;
 }
 
-interface PostProps {
+export interface PostType {
+  id: number;
   author: Author;
   publishedAt: Date;
   content: Content[];
 }
 
-export const PostComponent = ({ author, publishedAt, content }: PostProps) => {
+interface PostProps {
+  post: PostType;
+}
+
+export const PostComponent = ({ post }: PostProps) => {
   const [comments, setComments] = useState([
     "Post legal!!"
   ])
   const [newCommentText, setnewCommentText] = useState('');
 
   const publishedDataFormatted = format(
-    publishedAt,
+    post.publishedAt,
     "d 'de' LLLL 'às' HH:mm'h'",
     {
       locale: ptBR,
     }
   );
 
-  const publishedDateRelativeToNow = formatDistanceToNow(publishedAt, {
+  const publishedDateRelativeToNow = formatDistanceToNow(post.publishedAt, {
     locale: ptBR,
     addSuffix: true,
   });
@@ -71,22 +76,22 @@ export const PostComponent = ({ author, publishedAt, content }: PostProps) => {
     <S.Container>
       <S.Header>
         <S.Author>
-          <Avatar src={author.avatarUrl} />
+          <Avatar src={post.author.avatarUrl} />
           <S.AuthorInfo>
-            <strong>{author.name}</strong>
-            <span>{author.role}</span>
+            <strong>{post.author.name}</strong>
+            <span>{post.author.role}</span>
           </S.AuthorInfo>
         </S.Author>
         <S.PostTime
           title={publishedDataFormatted}
-          dateTime={publishedAt.toISOString()}
+          dateTime={post.publishedAt.toISOString()}
         >
           {publishedDateRelativeToNow}
         </S.PostTime>
       </S.Header>
 
       <div>
-        {content.map((item, index) => {
+        {post.content.map((item, index) => {
           if (item.type === "paragraph") {
             return <S.TextContent key={index}>{item.content}</S.TextContent>;
           } else if (item.type === "link") {
